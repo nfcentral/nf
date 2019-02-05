@@ -74,20 +74,21 @@ def prepare(config):
     for feature in ["aiohttp", "quart", "jupyter", "jupyter.plots", "postgresql", "emacs"]:
         context["features"][feature] = feature in features
 
+    extend_context = lambda sname, dname, source: context[dname].extend([{"_name": e} for e in source.get(sname, [])])
     files = []
     for feature in features:
         files.extend([(f, False) for f in FILES.get(feature, [])])
         files.extend([(f, True) for f in EXAMPLE_FILES.get(feature, [])])
-        context["requirements_nf"].extend([{"_name": r} for r in REQUIREMENTS_NF.get(feature, [])])
-        context["requirements_nf_dev"].extend([{"_name": r} for r in REQUIREMENTS_NF_DEV.get(feature, [])])
-        context["dependencies_nf_build"].extend([{"_name": d} for d in DEPENDENCIES_NF_BUILD.get(feature, [])])
-        context["dependencies_nf_dev_build"].extend([{"_name": d} for d in DEPENDENCIES_NF_DEV_BUILD.get(feature, [])])
-        context["dependencies"].extend([{"_name": d} for d in DEPENDENCIES_NF.get(feature, [])])
-        context["dependencies_dev"].extend([{"_name": d} for d in DEPENDENCIES_NF_DEV.get(feature, [])])
-    context["dependencies_build"].extend([{"_name": d} for d in config.get("dependencies_build", [])])
-    context["dependencies_dev_build"].extend([{"_name": d} for d in config.get("dependencies_dev_build", [])])
-    context["dependencies"].extend([{"_name": d} for d in config.get("dependencies", [])])
-    context["dependencies_dev"].extend([{"_name": d} for d in config.get("dependencies_dev", [])])
+        extend_context(feature, "requirements_nf", REQUIREMENTS_NF)
+        extend_context(feature, "requirements_nf_dev", REQUIREMENTS_NF_DEV)
+        extend_context(feature, "dependencies_nf_build", DEPENDENCIES_NF_BUILD)
+        extend_context(feature, "dependencies_nf_dev_build", DEPENDENCIES_NF_DEV_BUILD)
+        extend_context(feature, "dependencies", DEPENDENCIES_NF)
+        extend_context(feature, "dependencies_dev", DEPENDENCIES_NF_DEV)
+    extend_context("dependencies_build", "dependencies_build", config)
+    extend_context("dependencies_dev_build", "dependencies_dev_build", config)
+    extend_context("dependencies", "dependencies", config)
+    extend_context("dependencies_dev", "dependencies_dev", config)
 
     root = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ps")
     files = [(f, e) if isinstance(f, tuple) else ((f, f), e) for (f, e) in files]
