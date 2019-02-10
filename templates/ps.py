@@ -2,43 +2,51 @@ import os
 import re
 
 
+FEATURES = ["http", "http_aiohttp", "http_quart", "http_starlette", "jupyter", "jupyter_plots", "db", "db_postgres", "emacs"]
+
 REQUIREMENTS_NF = {
     "": ["uvloop"],
-    "aiohttp": ["aiohttp", "gunicorn"],
-    "quart": ["quart", "uvicorn"],
-    "postgresql": ["psycopg2", "asyncpgsa"]
+    "http_aiohttp": ["aiohttp", "gunicorn"],
+    "http_quart": ["quart", "uvicorn"],
+    "http_starlette": ["starlette", "uvicorn"],
+    "db_postgres": ["psycopg2", "asyncpgsa"]
 }
 
 DEPENDENCIES_NF_BUILD = {
-    "postgresql": ["postgresql-dev"]
+    "db_postgres": ["postgresql-dev"]
 }
 
 DEPENDENCIES_NF = {
-    "postgresql": ["libpq"]
+    "db_postgres": ["libpq"]
 }
 
 REQUIREMENTS_NF_DEV = {
+    "http_quart": ["hypercorn"],
+    "http_starlette": ["hypercorn"],
     "jupyter": ["jupyterlab"],
-    "jupyter.plots": ["matplotlib", "seaborn"]
+    "jupyter_plots": ["matplotlib", "seaborn"]
 }
 
 DEPENDENCIES_NF_DEV_BUILD = {
-    "jupyter": ["zeromq-dev"]
+    "jupyter": ["zeromq-dev"],
+    "jupyter_plots": ["libpng-dev", "freetype-dev"]
 }
 
 DEPENDENCIES_NF_DEV = {
-    "jupyter": ["zeromq-dev"]
+    "jupyter": ["zeromq-dev"],
+    "jupyter_plots": ["libpng", "freetype"]
 }
 
 FILES = {
-    "": ["Dockerfile", "requirements.nf.txt", "requirements.nf.dev.txt"],
+    "": ["Dockerfile", "docker-compose.yml", "requirements.nf.txt", "requirements.nf.dev.txt"],
     "emacs": ["app/.dir-locals.el"]
 }
 
 EXAMPLE_FILES = {
-    "": ["requirements.txt", "requirements.dev.txt"],
-    "aiohttp": [("app/aiohttp.app.py", "app/{{name}}.py")],
-    "quart": [("app/quart.app.py", "app/{{name}}.py")]
+    "": [".gitignore", "requirements.txt", "requirements.dev.txt"],
+    "http_aiohttp": [("app/aiohttp.app.py", "app/{{name}}.py")],
+    "http_quart": [("app/quart.app.py", "app/{{name}}.py")],
+    "http_starlette": [("app/starlette.app.py", "app/{{name}}.py")]
 }
 
 
@@ -67,11 +75,11 @@ def prepare(config):
         feature_split = re.search("(.*)\[(.*)\]", feature)
         if feature_split is not None:
             features.append(feature_split.group(1))
-            features.extend(["{}.{}".format(feature_split.group(1), option) for option in feature_split.group(2).split(",")])
+            features.extend(["{}_{}".format(feature_split.group(1), option) for option in feature_split.group(2).split(",")])
         else:
             features.append(feature)
 
-    for feature in ["aiohttp", "quart", "jupyter", "jupyter.plots", "postgresql", "emacs"]:
+    for feature in FEATURES:
         context["features"][feature] = feature in features
 
     extend_context = lambda sname, dname, source: context[dname].extend([{"_name": e} for e in source.get(sname, [])])

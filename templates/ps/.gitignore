@@ -1,0 +1,7 @@
+__pycache__
+Dockerfile
+docker-compose.yml
+requirements.nf.*
+{{#features.emacs}}
+app/.dir-locals.el
+{{/features.emacs}}
