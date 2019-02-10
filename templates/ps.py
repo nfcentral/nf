@@ -2,7 +2,7 @@ import os
 import re
 
 
-FEATURES = ["http", "http_aiohttp", "http_quart", "http_starlette", "jupyter", "jupyter_plots", "db", "db_postgres", "emacs"]
+FEATURES = ["http", "http_aiohttp", "http_quart", "http_starlette", "jupyter", "jupyter_plots", "db", "db_postgres"]
 
 REQUIREMENTS_NF = {
     "": ["uvloop"],
@@ -24,26 +24,25 @@ REQUIREMENTS_NF_DEV = {
     "http_quart": ["hypercorn"],
     "http_starlette": ["hypercorn"],
     "jupyter": ["jupyterlab"],
-    "jupyter_plots": ["matplotlib", "seaborn"]
+    "jupyter_plots": ["pandas!=0.24.0,!=0.24.1", "matplotlib", "seaborn"]
 }
 
 DEPENDENCIES_NF_DEV_BUILD = {
     "jupyter": ["zeromq-dev"],
-    "jupyter_plots": ["libpng-dev", "freetype-dev"]
+    "jupyter_plots": ["libpng-dev", "freetype-dev", "openblas-dev"]
 }
 
 DEPENDENCIES_NF_DEV = {
     "jupyter": ["zeromq-dev"],
-    "jupyter_plots": ["libpng", "freetype"]
+    "jupyter_plots": ["libpng", "freetype", "openblas"]
 }
 
 FILES = {
-    "": ["Dockerfile", "docker-compose.yml", "requirements.nf.txt", "requirements.nf.dev.txt"],
-    "emacs": ["app/.dir-locals.el"]
+    "": ["Dockerfile", "docker-compose.yml", "requirements.nf.txt", "requirements.nf.dev.txt", ".nf/.dir-locals.el"]
 }
 
 EXAMPLE_FILES = {
-    "": [("_gitignore", ".gitignore"), "requirements.txt", "requirements.dev.txt"],
+    "": [("_gitignore", ".gitignore"), ".nf/ssh_host_ecdsa_key", ".nf/ssh_host_ecdsa_key.pub", "requirements.txt", "requirements.dev.txt"],
     "http_aiohttp": [("app/aiohttp.app.py", "app/{{name}}.py")],
     "http_quart": [("app/quart.app.py", "app/{{name}}.py")],
     "http_starlette": [("app/starlette.app.py", "app/{{name}}.py")]

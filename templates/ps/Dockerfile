@@ -85,8 +85,10 @@ COPY --from=requirements /requirements.dev/ /python/versions/{{python.version}}/
 
 FROM app_dev_base as code
 ENV PYTHONPATH="/app"
+COPY .nf/.dir-locals.el /.dir-locals.el
 RUN apk add --no-cache openssh
-RUN ssh-keygen -A
+COPY .nf/ssh_host_* /etc/ssh/
+RUN chmod 0600 /etc/ssh/ssh_host_*
 CMD ["/usr/sbin/sshd", "-o", "ListenAddress=0.0.0.0", "-o", "AllowTcpForwarding=yes", "-o", "PasswordAuthentication=yes", "-o", "PermitEmptyPasswords=yes", "-o", "PermitRootLogin=yes", "-D"]
 
 

@@ -3,6 +3,7 @@ services:
   dev:
     build:
       context: .
+      network: host
       target: app_dev
     volumes:
       - ./app:/app
@@ -12,6 +13,7 @@ services:
   code:
     build:
       context: .
+      network: host
       target: code
     volumes:
       - ./app:/app
@@ -22,10 +24,11 @@ services:
   jupyter:
     build:
       context: .
-      target: code
+      network: host
+      target: jupyter
     volumes:
       - ./app:/app
-      - ./notebooks:/app/notebooks
+      - ./notebooks:/notebooks
     ports:
       - "8888:8888"
     restart: always
