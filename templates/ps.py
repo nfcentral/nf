@@ -43,7 +43,7 @@ FILES = {
 }
 
 EXAMPLE_FILES = {
-    "": [".gitignore", "requirements.txt", "requirements.dev.txt"],
+    "": [("_gitignore", ".gitignore"), "requirements.txt", "requirements.dev.txt"],
     "http_aiohttp": [("app/aiohttp.app.py", "app/{{name}}.py")],
     "http_quart": [("app/quart.app.py", "app/{{name}}.py")],
     "http_starlette": [("app/starlette.app.py", "app/{{name}}.py")]

@@ -1,0 +1,32 @@
+version: "3.4"
+services:
+  dev:
+    build:
+      context: .
+      target: app_dev
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    restart: always
+  code:
+    build:
+      context: .
+      target: code
+    volumes:
+      - ./app:/app
+    ports:
+      - "2222:22"
+    restart: always
+{{#features.jupyter}}
+  jupyter:
+    build:
+      context: .
+      target: code
+    volumes:
+      - ./app:/app
+      - ./notebooks:/app/notebooks
+    ports:
+      - "8888:8888"
+    restart: always
+{{/features.jupyter}}
