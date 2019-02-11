@@ -28,7 +28,7 @@ You can enable set of features for your project. Each feature can have set of su
 System Dependencies
 -------------------
 
-You can also add system deoendencies needed to either for your app or for python libs you are uisng.
+You can also add system dependencies needed either for your app or for python libs you are uisng.
 
     dependencies            # dependencies needed at runtime for all images
     dependencies_build      # dependencies needed only at build time for all images
