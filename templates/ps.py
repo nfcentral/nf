@@ -38,11 +38,11 @@ DEPENDENCIES_NF_DEV = {
 }
 
 FILES = {
-    "": [".nf/Dockerfile", ".nf/docker-compose.yml", ".nf/nf-release", ".nf/pipframer", "requirements.nf.txt", "requirements.nf.dev.txt", ".nf/.dir-locals.el"]
+    "": ["common:.nf/pipframer", ".nf/nf-release", ".nf/Dockerfile", ".nf/docker-compose.yml", "requirements.nf.txt", "requirements.nf.dev.txt", ".nf/.dir-locals.el"]
 }
 
 EXAMPLE_FILES = {
-    "": [("_gitignore", ".gitignore"), ".nf/ssh_host_ecdsa_key", ".nf/ssh_host_ecdsa_key.pub", "requirements.txt", "requirements.dev.txt"],
+    "": ["common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub", ("_gitignore", ".gitignore"), "requirements.txt", "requirements.dev.txt"],
     "http_aiohttp": [("app/aiohttp.app.py", "app/{{name}}.py")],
     "http_quart": [("app/quart.app.py", "app/{{name}}.py")],
     "http_starlette": [("app/starlette.app.py", "app/{{name}}.py")]
@@ -99,6 +99,8 @@ def prepare(config):
 
     root = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ps")
     files = [(f, e) if isinstance(f, tuple) else ((f, f), e) for (f, e) in files]
+    files = [((os.path.join("..", *ff.split(":")), ft), e) if ":" in ff else ((ff, ft), e) for ((ff, ft), e) in files]
+    files = [((ff, ft.split(":")[1]), e) if ":" in ft else ((ff, ft), e) for ((ff, ft), e) in files]
     files = [((os.path.join(root, ff), ft), e) for ((ff, ft), e) in files]
 
     return files, context
