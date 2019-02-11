@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -e
 docker run --rm -d --name nfcache -v nfcache:/data -p 873:873 theiced/nfcache
 DOCKER_BUILDKIT=1 docker build --network host --target code -t {{name}}_code -f .nf/Dockerfile .
 DOCKER_BUILDKIT=1 docker build --network host --target app_dev -t {{name}}_dev -f .nf/Dockerfile .

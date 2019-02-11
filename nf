@@ -3,8 +3,23 @@
 command=$1
 shift
 
-if [ "${command}" = "generate" ]; then
-    docker run --rm -v $(pwd):/project theiced/nf generate $*
-else
-    sh .nf/nf-${command} $*
-fi
+case $command in
+    new)
+        name=$1
+        mkdir ${name}
+        cat << EOF > ${name}/nf.json
+{
+  "name": "${name}",
+  "template": "ps",
+  "python": "3.7.2",
+  "features": []
+}
+EOF
+    ;;
+    generate)
+        docker run --rm -v $(pwd):/project theiced/nf generate $*
+        ;;
+    *)
+        sh .nf/nf-${command} $*
+        ;;
+esac

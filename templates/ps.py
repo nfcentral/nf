@@ -2,27 +2,22 @@ import os
 import re
 
 
-FEATURES = ["http", "http_aiohttp", "http_quart", "http_starlette", "jupyter", "jupyter_plots", "db", "db_postgres"]
+FEATURES = ["jupyter", "jupyter_plots", "postgres"]
 
 REQUIREMENTS_NF = {
-    "": ["uvloop"],
-    "http_aiohttp": ["aiohttp", "gunicorn"],
-    "http_quart": ["quart", "uvicorn"],
-    "http_starlette": ["starlette", "uvicorn"],
-    "db_postgres": ["psycopg2", "asyncpgsa"]
+    "": ["uvloop", "ujson", "starlette", "gunicorn", "uvicorn"],
+    "postgres": ["psycopg2", "asyncpgsa"]
 }
 
 DEPENDENCIES_NF_BUILD = {
-    "db_postgres": ["postgresql-dev"]
+    "postgres": ["postgresql-dev"]
 }
 
 DEPENDENCIES_NF = {
-    "db_postgres": ["libpq"]
+    "postgres": ["libpq"]
 }
 
 REQUIREMENTS_NF_DEV = {
-    "http_quart": ["hypercorn"],
-    "http_starlette": ["hypercorn"],
     "jupyter": ["jupyterlab"],
     "jupyter_plots": ["pandas!=0.24.0,!=0.24.1", "matplotlib", "seaborn"]
 }
@@ -42,10 +37,7 @@ FILES = {
 }
 
 EXAMPLE_FILES = {
-    "": ["common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub", ("_gitignore", ".gitignore"), "requirements.txt", "requirements.dev.txt"],
-    "http_aiohttp": [("app/aiohttp.app.py", "app/{{name}}.py")],
-    "http_quart": [("app/quart.app.py", "app/{{name}}.py")],
-    "http_starlette": [("app/starlette.app.py", "app/{{name}}.py")]
+    "": ["common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub", ("_gitignore", ".gitignore"), "requirements.txt", "requirements.dev.txt", ("app/app.py", "app/{{name}}.py")]
 }
 
 

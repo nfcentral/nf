@@ -1,6 +1,6 @@
 version: "3.4"
 services:
-  {{name}}_code:
+  code:
     image:
       {{name}}_code
     volumes:
@@ -8,7 +8,7 @@ services:
     ports:
       - "2222:22"
     restart: always
-  {{name}}_dev:
+  dev:
     image:
       {{name}}_dev
     volumes:
@@ -17,7 +17,7 @@ services:
       - "8000:8000"
     restart: always
 {{#features.jupyter}}
-  {{name}}_jupyter:
+  jupyter:
     image:
       {{name}}_jupyter
     volumes:

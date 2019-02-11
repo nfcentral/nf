@@ -97,15 +97,7 @@ CMD ["/usr/sbin/sshd", "-o", "ListenAddress=0.0.0.0", "-o", "AllowTcpForwarding=
 
 
 FROM app_dev_base as app_dev
-{{#features.http_aiohttp}}
-CMD ["gunicorn", "{{name}}:app", "--bind", "0.0.0.0:8000", "--worker-class", "aiohttp.GunicornUVLoopWebWorker", "--workers", "1", "--reload"]
-{{/features.http_aiohttp}}
-{{#features.http_quart}}
-CMD ["hypercorn", "-b", "0.0.0.0:8000", "--worker-class", "uvloop", "--workers", "1", "--reload", "{{name}}:app"]
-{{/features.http_quart}}
-{{#features.http_starlette}}
-CMD ["hypercorn", "-b", "0.0.0.0:8000", "--worker-class", "uvloop", "--workers", "1", "--reload", "{{name}}:app"]
-{{/features.http_starlette}}
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "--debug", "{{name}}:app"]
 
 
 {{#features.jupyter}}
@@ -120,12 +112,4 @@ CMD ["jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--port=8888", "--LabApp.
 FROM app_base as app
 COPY ./app /app/
 RUN find /app -type d -name __pycache__ -exec rm -rf '{}' + ;
-{{#features.http_aiohttp}}
-CMD ["gunicorn", "{{name}}:app", "--bind", "0.0.0.0:8000", "--worker-class", "aiohttp.GunicornUVLoopWebWorker", "--workers", "1"]
-{{/features.http_aiohttp}}
-{{#features.http_quart}}
-CMD ["uvicorn", "{{name}}::app", "--host", "0.0.0.0", "--port", "8000", "--loop", "uvloop", "--no-access-log"]
-{{/features.http_quart}}
-{{#features.http_starlette}}
-CMD ["uvicorn", "{{name}}::app", "--host", "0.0.0.0", "--port", "8000", "--loop", "uvloop", "--no-access-log"]
-{{/features.http_starlette}}
+CMD ["gunicorn", "{{name}}:app", "-b", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "-w", "1"]
