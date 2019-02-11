@@ -14,7 +14,7 @@ Usage
     nf build        # bulds your project
     nf up           # starts all containers you need for development, app is epxosed to :8000
 
-To edit your code you need any editor from the list of editors which can properly edit projects over ssh. As this list starts and ends with emacs, just point your emacs to `ssh://root@localhost#2222:/app` and you are good to go. If you need completions - standard setup of [anaconda-mode](https://github.com/proofit404/anaconda-mode) will work.
+To edit your code you need any editor from the list of editors which can properly edit projects over ssh. As this list starts and ends with emacs, just point your emacs to `ssh://root@localhost#2222:/app` and you are good to go. If you need completions and code introspection - standard [anaconda-mode](https://github.com/proofit404/anaconda-mode) setup should work.
 
 Features
 --------
@@ -30,7 +30,7 @@ System Dependencies
 
 You can also add system deoendencies needed to either for your app or for python libs you are uisng.
 
-    dependencies            # dependencis needed at runtime for all images
+    dependencies            # dependencies needed at runtime for all images
     dependencies_build      # dependencies needed only at build time for all images
-    dependencies_dev        # dependencis needed at runtime for dev images
+    dependencies_dev        # dependencies needed at runtime for dev images
     dependencies_dev_build  # dependencies needed only at build time for all images
