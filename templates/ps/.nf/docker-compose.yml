@@ -1,34 +1,25 @@
 version: "3.4"
 services:
-  dev:
-    build:
-      context: .
-      dockerfile: .nf/Dockerfile
-      network: host
-      target: app_dev
-    volumes:
-      - ./app:/app
-    ports:
-      - "8000:8000"
-    restart: always
-  code:
-    build:
-      context: .
-      dockerfile: .nf/Dockerfile
-      network: host
-      target: code
+  {{name}}_code:
+    image:
+      {{name}}_code
     volumes:
       - ./app:/app
     ports:
       - "2222:22"
     restart: always
+  {{name}}_dev:
+    image:
+      {{name}}_dev
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    restart: always
 {{#features.jupyter}}
-  jupyter:
-    build:
-      context: .
-      dockerfile: .nf/Dockerfile
-      network: host
-      target: jupyter
+  {{name}}_jupyter:
+    image:
+      {{name}}_jupyter
     volumes:
       - ./app:/app
       - ./notebooks:/notebooks

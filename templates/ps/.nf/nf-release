@@ -1,3 +1,0 @@
-#!/bin/sh
-
-docker build --network host --target app -t {{name}} -f .nf/Dockerfile .

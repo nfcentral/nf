@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker-compose -f .nf/docker-compose.yml --project-directory . up
