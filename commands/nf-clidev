@@ -1,5 +1,0 @@
-#!/bin/sh
-
-origin=$(pwd)
-cd $(dirname $(realpath $0)) && cd .. && docker build -t theiced/nf -f dockers/Dockerfile . && cd $origin
-docker run --rm -v $(pwd):/project theiced/nf $*
