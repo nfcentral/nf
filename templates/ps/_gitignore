@@ -1,5 +1,3 @@
 __pycache__
 .nf
-Dockerfile
-docker-compose.yml
 requirements.nf.*

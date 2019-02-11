@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rsync -rz rsync://root@localhost:873/data/pipframer /
+command=$1
+shift
+pip ${command} --cache-dir /pipframer $*
+rsync -rz /pipframer rsync://root@localhost:873/data/

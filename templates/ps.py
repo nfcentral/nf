@@ -38,7 +38,7 @@ DEPENDENCIES_NF_DEV = {
 }
 
 FILES = {
-    "": ["Dockerfile", "docker-compose.yml", "requirements.nf.txt", "requirements.nf.dev.txt", ".nf/.dir-locals.el"]
+    "": [".nf/Dockerfile", ".nf/docker-compose.yml", ".nf/nf-release", ".nf/pipframer", "requirements.nf.txt", "requirements.nf.dev.txt", ".nf/.dir-locals.el"]
 }
 
 EXAMPLE_FILES = {

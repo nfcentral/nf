@@ -18,9 +18,12 @@ ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
 
 
 FROM python_build as requirements
+RUN apk add --no-cache rsync
+COPY .nf/pipframer /bin
+RUN chmod +x /bin/pipframer
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages"
-RUN pip install --upgrade --prefix /requirements.sys pip setuptools
+RUN pipframer install --upgrade --prefix /requirements.sys pip setuptools wheel
 RUN find /requirements.sys -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_build}}
@@ -30,7 +33,7 @@ COPY requirements.nf.txt /
 ENV PATH="/requirements.nf/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf
-RUN pip install --prefix /requirements.nf -r requirements.nf.txt
+RUN pipframer install --prefix /requirements.nf -r requirements.nf.txt
 RUN find /requirements.nf -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_build}}
@@ -40,7 +43,7 @@ COPY requirements.txt /
 ENV PATH="/requirements/bin:${PATH}"
 ENV PYTHONPATH="/requirements/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements
-RUN pip install --prefix /requirements -r requirements.txt
+RUN pipframer install --prefix /requirements -r requirements.txt
 RUN find /requirements -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_dev_build}}
@@ -50,7 +53,7 @@ COPY requirements.nf.dev.txt /
 ENV PATH="/requirements.nf.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf.dev
-RUN pip install --prefix /requirements.nf.dev -r requirements.nf.dev.txt
+RUN pipframer install --prefix /requirements.nf.dev -r requirements.nf.dev.txt
 RUN find /requirements.nf.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_dev_build}}
@@ -60,7 +63,7 @@ COPY requirements.dev.txt /
 ENV PATH="/requirements.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.dev
-RUN pip install --prefix /requirements.dev -r requirements.dev.txt
+RUN pipframer install --prefix /requirements.dev -r requirements.dev.txt
 RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 
