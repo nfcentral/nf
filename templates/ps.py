@@ -1,8 +1,14 @@
-import os
-import re
-
-
+NAME = "ps"
+PARENTS = ["common"]
 FEATURES = ["jupyter", "jupyter_plots", "postgres"]
+
+FILES = {
+    "": [".nf/pipframer", ".nf/Dockerfile", ".nf/docker-compose.yml", ".nf/requirements.nf.txt", ".nf/requirements.nf.dev.txt", ".nf/.dir-locals.el", "common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub"]
+}
+
+EXAMPLE_FILES = {
+    "": ["requirements.txt", "requirements.dev.txt", ("app/app.py", "app/{{name}}.py")]
+}
 
 REQUIREMENTS_NF = {
     "": ["uvloop", "ujson", "starlette", "gunicorn", "uvicorn"],
@@ -32,17 +38,9 @@ DEPENDENCIES_NF_DEV = {
     "jupyter_plots": ["libpng", "freetype", "openblas"]
 }
 
-FILES = {
-    "": ["common:.nf/pipframer", ".nf/nf-build", ".nf/nf-up", ".nf/Dockerfile", ".nf/docker-compose.yml", "requirements.nf.txt", "requirements.nf.dev.txt", ".nf/.dir-locals.el"]
-}
 
-EXAMPLE_FILES = {
-    "": ["common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub", ("_gitignore", ".gitignore"), "requirements.txt", "requirements.dev.txt", ("app/app.py", "app/{{name}}.py")]
-}
-
-
-def prepare(config):
-    context = {
+def prepare(config, context):
+    context.update({
         "name": config["name"],
         "python": {
             "version": config["python"],
@@ -57,42 +55,18 @@ def prepare(config):
         "dependencies_nf_dev_build": [],
         "dependencies_dev_build": [],
         "dependencies": [],
-        "dependencies_dev": [],
-        "features": {}
-    }
+        "dependencies_dev": []
+    })
 
-    features = [""]
+    extend_rd = lambda source, sname, dname: context[dname].extend([{"_": e} for e in source.get(sname, [])])
     for feature in config["features"]:
-        feature_split = re.search("(.*)\[(.*)\]", feature)
-        if feature_split is not None:
-            features.append(feature_split.group(1))
-            features.extend(["{}_{}".format(feature_split.group(1), option) for option in feature_split.group(2).split(",")])
-        else:
-            features.append(feature)
-
-    for feature in FEATURES:
-        context["features"][feature] = feature in features
-
-    extend_context = lambda sname, dname, source: context[dname].extend([{"_name": e} for e in source.get(sname, [])])
-    files = []
-    for feature in features:
-        files.extend([(f, False) for f in FILES.get(feature, [])])
-        files.extend([(f, True) for f in EXAMPLE_FILES.get(feature, [])])
-        extend_context(feature, "requirements_nf", REQUIREMENTS_NF)
-        extend_context(feature, "requirements_nf_dev", REQUIREMENTS_NF_DEV)
-        extend_context(feature, "dependencies_nf_build", DEPENDENCIES_NF_BUILD)
-        extend_context(feature, "dependencies_nf_dev_build", DEPENDENCIES_NF_DEV_BUILD)
-        extend_context(feature, "dependencies", DEPENDENCIES_NF)
-        extend_context(feature, "dependencies_dev", DEPENDENCIES_NF_DEV)
-    extend_context("dependencies_build", "dependencies_build", config)
-    extend_context("dependencies_dev_build", "dependencies_dev_build", config)
-    extend_context("dependencies", "dependencies", config)
-    extend_context("dependencies_dev", "dependencies_dev", config)
-
-    root = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ps")
-    files = [(f, e) if isinstance(f, tuple) else ((f, f), e) for (f, e) in files]
-    files = [((os.path.join("..", *ff.split(":")), ft), e) if ":" in ff else ((ff, ft), e) for ((ff, ft), e) in files]
-    files = [((ff, ft.split(":")[1]), e) if ":" in ft else ((ff, ft), e) for ((ff, ft), e) in files]
-    files = [((os.path.join(root, ff), ft), e) for ((ff, ft), e) in files]
-
-    return files, context
+        extend_rd(REQUIREMENTS_NF, feature, "requirements_nf")
+        extend_rd(REQUIREMENTS_NF_DEV, feature, "requirements_nf_dev")
+        extend_rd(DEPENDENCIES_NF_BUILD, feature, "dependencies_nf_build")
+        extend_rd(DEPENDENCIES_NF_DEV_BUILD, feature, "dependencies_nf_dev_build")
+        extend_rd(DEPENDENCIES_NF, feature, "dependencies")
+        extend_rd(DEPENDENCIES_NF_DEV, feature, "dependencies_dev")
+    extend_rd(config, "dependencies_build", "dependencies_build")
+    extend_rd(config, "dependencies_dev_build", "dependencies_dev_build")
+    extend_rd(config, "dependencies", "dependencies")
+    extend_rd(config, "dependencies_dev", "dependencies_dev")

@@ -20,6 +20,6 @@ EOF
         docker run --rm -v $(pwd):/project theiced/nf generate $*
         ;;
     *)
-        sh .nf/nf-${command} $*
+        sh .nf/commands/${command} $*
         ;;
 esac

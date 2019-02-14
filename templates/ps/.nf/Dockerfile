@@ -28,9 +28,9 @@ RUN pipframer install --upgrade --prefix /requirements.sys pip setuptools wheel
 RUN find /requirements.sys -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_build}}
-RUN apk add --no-cache {{_name}}
+RUN apk add --no-cache {{_}}
 {{/dependencies_nf_build}}
-COPY requirements.nf.txt /
+COPY .nf/requirements.nf.txt /
 ENV PATH="/requirements.nf/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf
@@ -38,7 +38,7 @@ RUN pipframer install --prefix /requirements.nf -r requirements.nf.txt
 RUN find /requirements.nf -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_build}}
-RUN apk add --no-cache {{_name}}
+RUN apk add --no-cache {{_}}
 {{/dependencies_build}}
 COPY requirements.txt /
 ENV PATH="/requirements/bin:${PATH}"
@@ -48,9 +48,9 @@ RUN pipframer install --prefix /requirements -r requirements.txt
 RUN find /requirements -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_dev_build}}
-RUN apk add --no-cache {{_name}}
+RUN apk add --no-cache {{_}}
 {{/dependencies_nf_dev_build}}
-COPY requirements.nf.dev.txt /
+COPY .nf/requirements.nf.dev.txt /
 ENV PATH="/requirements.nf.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf.dev
@@ -58,7 +58,7 @@ RUN pipframer install --prefix /requirements.nf.dev -r requirements.nf.dev.txt
 RUN find /requirements.nf.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_dev_build}}
-RUN apk add --no-cache {{_name}}
+RUN apk add --no-cache {{_}}
 {{/dependencies_dev_build}}
 COPY requirements.dev.txt /
 ENV PATH="/requirements.dev/bin:${PATH}"
@@ -72,7 +72,7 @@ FROM python as app_base
 RUN mkdir /app
 WORKDIR /app
 {{#dependencies}}
-RUN apk add --no-cache {{_name}}
+RUN apk add --no-cache {{_}}
 {{/dependencies}}
 COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.nf/ /python/versions/{{python.version}}/
@@ -81,7 +81,7 @@ COPY --from=requirements /requirements/ /python/versions/{{python.version}}/
 
 FROM app_base as app_dev_base
 {{#dependencies_dev}}
-RUN apk add --no-cache {{_name}}
+RUN apk add --no-cache {{_}}
 {{/dependencies_dev}}
 COPY --from=requirements /requirements.nf.dev/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.dev/ /python/versions/{{python.version}}/
