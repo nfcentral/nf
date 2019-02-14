@@ -3,7 +3,7 @@ PARENTS = []
 FEATURES = []
 
 FILES = {
-    "": [("dotgitignore", ".gitignore"), ".nf/commands/build", ".nf/commands/up"]
+    "": [("dotgitignore", ".gitignore")]
 }
 
 

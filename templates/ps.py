@@ -3,7 +3,7 @@ PARENTS = ["common"]
 FEATURES = ["jupyter", "jupyter_plots", "postgres"]
 
 FILES = {
-    "": [".nf/pipframer", ".nf/Dockerfile", ".nf/docker-compose.yml", ".nf/requirements.nf.txt", ".nf/requirements.nf.dev.txt", ".nf/.dir-locals.el", "common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub"]
+    "": [".nf/commands/build", ".nf/commands/up", ".nf/pipframer", ".nf/Dockerfile", ".nf/docker-compose.yml", ".nf/requirements.nf.txt", ".nf/requirements.nf.dev.txt", ".nf/.dir-locals.el", "common:.nf/ssh_host_ecdsa_key", "common:.nf/ssh_host_ecdsa_key.pub"]
 }
 
 EXAMPLE_FILES = {
