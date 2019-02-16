@@ -103,8 +103,7 @@ CMD ["/usr/sbin/sshd", "-o", "ListenAddress=0.0.0.0", "-o", "AllowTcpForwarding=
 
 
 FROM app_dev_base as app_dev
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "--debug", "{{name}}:app"]
-
+CMD {{app_run_dev_command}}
 
 {{#features.jupyter}}
 FROM app_dev_base as jupyter
@@ -118,4 +117,4 @@ CMD ["jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--port=8888", "--LabApp.
 FROM app_base as app
 COPY ./app /app/
 RUN find /app -type d -name __pycache__ -exec rm -rf '{}' + ;
-CMD ["gunicorn", "{{name}}:app", "-b", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "-w", "1"]
+CMD {{app_run_command}}

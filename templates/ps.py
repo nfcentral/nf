@@ -19,17 +19,13 @@ FILES = {
 
 EXAMPLE_FILES = {
     "": ["requirements.txt",
-         "requirements.dev.txt",
-         ("app/app.py", "app/{{name}}.py")]
+         "requirements.dev.txt"]
 }
 
 LISTS = {
     "requirements_nf": {
         "": ["uvloop",
-             "ujson",
-             "starlette",
-             "gunicorn",
-             "uvicorn"],
+             "ujson"],
         "postgres": ["psycopg2",
                      "asyncpgsa"]
     },

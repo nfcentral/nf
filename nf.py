@@ -65,14 +65,16 @@ def generate():
                 context[l] = []
             context[l].extend([{"_": e} for e in config.get(l, [])])
 
+    renderer = pystache.Renderer(escape=lambda u: u)
+
     root = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
     for ((ff, ft), e) in files:
-        ff = os.path.join(root, pystache.render(ff, context))
+        ff = os.path.join(root, renderer.render(ff, context))
         ft = pystache.render(ft, context)
         if e and os.path.exists(ft):
             continue
         with open(ff) as f:
-            content = pystache.render(f.read(), context)
+            content = renderer.render(f.read(), context)
         if os.path.dirname(ft) != "":
             os.makedirs(os.path.dirname(ft), exist_ok=True)
         with open(ft, "w") as f:
