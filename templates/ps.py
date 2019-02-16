@@ -69,7 +69,6 @@ CONFIG_LISTS = [
 
 def prepare(config, context):
     context.update({
-        "name": config["name"],
         "python": {
             "version": config["python"],
             "version_short": ".".join(config["python"].split(".")[:2])

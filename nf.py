@@ -36,6 +36,7 @@ def generate():
 
     files = []
     context = {
+        "name": config["name"],
         "features": {}
     }
 

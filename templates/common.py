@@ -15,6 +15,7 @@ LISTS = {
 CONFIG_LISTS = {
 }
 
+
 def prepare(config, context):
     context.update({
         "gitignore": []
