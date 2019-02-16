@@ -1,3 +1,0 @@
-{{#requirements_dev}}
-{{_}}
-{{/requirements_dev}}

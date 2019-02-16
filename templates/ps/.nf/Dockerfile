@@ -71,6 +71,9 @@ RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 FROM python as app_base
 RUN mkdir /app
 WORKDIR /app
+{{#dependencies_nf}}
+RUN apk add --no-cache {{_}}
+{{/dependencies_nf}}
 {{#dependencies}}
 RUN apk add --no-cache {{_}}
 {{/dependencies}}
@@ -80,6 +83,9 @@ COPY --from=requirements /requirements/ /python/versions/{{python.version}}/
 
 
 FROM app_base as app_dev_base
+{{#dependencies_nf_dev}}
+RUN apk add --no-cache {{_}}
+{{/dependencies_nf_dev}}
 {{#dependencies_dev}}
 RUN apk add --no-cache {{_}}
 {{/dependencies_dev}}

@@ -53,6 +53,17 @@ def generate():
         tfiles = [((ff, ft.split(":")[1] if ":" in ft else ft), e) for ((ff, ft), e) in tfiles]
         files.extend(tfiles)
 
+    for template in templates:
+        for l in template.LISTS.keys():
+            if context.get(l) is None:
+                context[l] = []
+            for feature in features:
+                context[l].extend([{"_": e} for e in template.LISTS[l].get(feature, [])])
+        for l in template.CONFIG_LISTS:
+            if context.get(l) is None:
+                context[l] = []
+            context[l].extend([{"_": e} for e in config.get(l, [])])
+
     root = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
     for ((ff, ft), e) in files:
         ff = os.path.join(root, pystache.render(ff, context))
