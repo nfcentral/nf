@@ -10,7 +10,7 @@ case $command in
         cat << EOF > ${name}/nf.json
 {
   "name": "${name}",
-  "template": "starlette",
+  "template": "python/starlette",
   "python": "3.7.2",
   "features": []
 }

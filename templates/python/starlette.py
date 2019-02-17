@@ -1,8 +1,8 @@
 import json
 
 
-NAME = "starlette"
-PARENTS = ["asgi"]
+NAME = "python/starlette"
+PARENTS = ["python/asgi"]
 FEATURES = []
 
 FILES = {

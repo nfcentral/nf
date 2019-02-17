@@ -6,7 +6,7 @@ import pystache
 
 
 def templates_list(name):
-    template = importlib.import_module("templates.{}".format(name))
+    template = importlib.import_module("templates.{}".format(name.replace("/", ".")))
     templates = [template]
     for parent in template.PARENTS:
         templates.extend(templates_list(parent))

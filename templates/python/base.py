@@ -1,4 +1,4 @@
-NAME = "ps"
+NAME = "python/base"
 PARENTS = ["common"]
 FEATURES = ["jupyter",
             "jupyter_plots",
