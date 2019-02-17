@@ -12,7 +12,7 @@ Usage
     nf new coolproj # creates new project with nf.json
     nf generate     # (re)generates everything you need
     nf build        # bulds your project
-    nf freeze       # freeze python packages
+    nf pipfreeze    # freeze python packages
     nf up           # starts all containers you need for development, app is epxosed to :8000
 
 To edit your code you need any editor from the list of editors which can properly edit projects over ssh. As this list starts and ends with emacs, just point your emacs to `ssh://root@localhost#2222:/app` and you are good to go. If you need completions and code introspection - standard [anaconda-mode](https://github.com/proofit404/anaconda-mode) setup should work.

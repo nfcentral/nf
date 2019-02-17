@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -e
+docker run --network host --rm {{name}}_requirements cat /nf.pipfreeze | tee nf.pipfreeze >/dev/null

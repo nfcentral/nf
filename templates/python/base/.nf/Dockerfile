@@ -9,11 +9,11 @@ RUN git clone --depth 1 https://github.com/pyenv/pyenv /python
 ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install {{python.version}}
 ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
-ADD pip.freeze /
+ADD nf.pipfreeze /
 RUN apk add --no-cache rsync
 COPY .nf/pipframer /bin
 RUN chmod +x /bin/pipframer
-RUN pipframer install --prefix /requirements.sys --upgrade pip setuptools wheel
+RUN pipframer install --prefix /requirements.sys -c /nf.pipfreeze --upgrade pip setuptools wheel
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN find /python/versions/{{python.version}} -depth \( \( -type d -a \( -name test -o -name tests -o -name __pycache__ \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
@@ -37,7 +37,7 @@ COPY .nf/requirements.nf.txt /
 ENV PATH="/requirements.nf/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf
-RUN pipframer install --prefix /requirements.nf -r requirements.nf.txt
+RUN pipframer install --prefix /requirements.nf -c /nf.pipfreeze -r requirements.nf.txt
 RUN find /requirements.nf -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_build}}
@@ -47,7 +47,7 @@ COPY requirements.txt /
 ENV PATH="/requirements/bin:${PATH}"
 ENV PYTHONPATH="/requirements/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements
-RUN pipframer install --prefix /requirements -r requirements.txt
+RUN pipframer install --prefix /requirements -c /nf.pipfreeze -r requirements.txt
 RUN find /requirements -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_dev_build}}
@@ -57,7 +57,7 @@ COPY .nf/requirements.nf.dev.txt /
 ENV PATH="/requirements.nf.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf.dev
-RUN pipframer install --prefix /requirements.nf.dev -r requirements.nf.dev.txt
+RUN pipframer install --prefix /requirements.nf.dev -c /nf.pipfreeze -r requirements.nf.dev.txt
 RUN find /requirements.nf.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_dev_build}}
@@ -67,10 +67,10 @@ COPY requirements.dev.txt /
 ENV PATH="/requirements.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.dev
-RUN pipframer install --prefix /requirements.dev -r requirements.dev.txt
+RUN pipframer install --prefix /requirements.dev -c /nf.pipfreeze -r requirements.dev.txt
 RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
-RUN pip freeze >/pip.freeze
+RUN pip freeze >/nf.pipfreeze
 
 FROM python as app_base
 RUN mkdir /app
