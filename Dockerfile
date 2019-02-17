@@ -11,7 +11,6 @@ ENV PATH="/python/versions/3.7.2/bin:${PATH}"
 RUN apk add --no-cache rsync
 COPY templates/python/base/.nf/pipframer /bin
 RUN chmod +x /bin/pipframer
-RUN pipframer install --prefix /requirements.sys --upgrade pip setuptools wheel
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python3.7/site-packages:${PYTHONPATH}"
 RUN pipframer install --prefix /requirements.sys --upgrade pip setuptools wheel

@@ -1,12 +1,12 @@
 NAME = "python/base"
 PARENTS = ["common"]
-FEATURES = ["freeze",
-            "jupyter",
+FEATURES = ["jupyter",
             "jupyter_plots",
             "postgres"]
 
 FILES = {
     "": [".nf/commands/build",
+         ".nf/commands/freeze",
          ".nf/commands/up",
          ".nf/pipframer",
          ".nf/Dockerfile",
@@ -20,8 +20,8 @@ FILES = {
 
 EXAMPLE_FILES = {
     "": ["requirements.txt",
-         "requirements.dev.txt"],
-    "freeze": ["nf.pipfreeze"]
+         "requirements.dev.txt",
+         "pip.freeze"]
 }
 
 LISTS = {

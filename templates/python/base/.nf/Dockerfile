@@ -9,9 +9,7 @@ RUN git clone --depth 1 https://github.com/pyenv/pyenv /python
 ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install {{python.version}}
 ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
-{{#features.freeze}}
-ADD nf.pipfreeze /
-{{/features.freeze}}
+ADD pip.freeze /
 RUN apk add --no-cache rsync
 COPY .nf/pipframer /bin
 RUN chmod +x /bin/pipframer
@@ -72,9 +70,7 @@ RUN mkdir /requirements.dev
 RUN pipframer install --prefix /requirements.dev -r requirements.dev.txt
 RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
-{{#features.freeze}}
-RUN pip freeze >/nf.pipfreeze
-{{/features.freeze}}
+RUN pip freeze >/pip.freeze
 
 FROM python as app_base
 RUN mkdir /app

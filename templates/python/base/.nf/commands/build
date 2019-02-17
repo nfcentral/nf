@@ -4,10 +4,7 @@ set -e
 if [ -z "$(docker ps -q -f name=nfcache)" ]; then
     docker run --rm -d --name nfcache -v nfcache:/data -p 873:873 nfcentral/nfcache:latest
 fi
-{{#features.freeze}}
 DOCKER_BUILDKIT=1 docker build --network host --target requirements -t {{name}}_requirements -f .nf/Dockerfile .
-docker run --network host --rm {{name}}_requirements cat /nf.pipfreeze | tee nf.pipfreeze >/dev/null
-{{/features.freeze}}
 DOCKER_BUILDKIT=1 docker build --network host --target code -t {{name}}_code -f .nf/Dockerfile .
 DOCKER_BUILDKIT=1 docker build --network host --target app_dev -t {{name}}_dev -f .nf/Dockerfile .
 {{#features.jupyter}}

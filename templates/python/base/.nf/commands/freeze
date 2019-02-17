@@ -1,0 +1,4 @@
+#!/bin/sh
+
+set -e
+docker run --network host --rm {{name}}_requirements cat /pip.freeze | tee pip.freeze >/dev/null
