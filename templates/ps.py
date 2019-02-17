@@ -23,6 +23,9 @@ EXAMPLE_FILES = {
 }
 
 LISTS = {
+    "gitignore": {
+        "": ["__pycache__"]
+    },
     "requirements_nf": {
         "": ["uvloop",
              "ujson"],

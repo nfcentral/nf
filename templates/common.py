@@ -10,6 +10,9 @@ EXAMPLE_FILES = {
 }
 
 LISTS = {
+    "gitignore": {
+        "": [".nf"]
+    }
 }
 
 CONFIG_LISTS = {
@@ -17,6 +20,4 @@ CONFIG_LISTS = {
 
 
 def prepare(config, context):
-    context.update({
-        "gitignore": []
-    })
+    pass
