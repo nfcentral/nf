@@ -7,5 +7,9 @@ rsync -z /pipframer/.pipframer rsync://root@localhost:873/data/pipframer/
 rsync -rz rsync://root@localhost:873/data/pipframer /
 command=$1
 shift
-pip ${command} --cache-dir /pipframer $*
+if [ -f "/nf.pipfreeze" ]; then
+    pip ${command} --cache-dir /pipframer -c /nf.pipfreeze $*
+else
+    pip ${command} --cache-dir /pipframer $*
+fi
 rsync -rz /pipframer rsync://root@localhost:873/data/
