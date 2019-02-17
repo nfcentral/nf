@@ -21,6 +21,7 @@ Features
 
 You can enable set of features for your project. Each feature can have set of subfeatures, in this case you can just use `feature[subfeature1,subfeature2]`.
 
+    freeze          # freezes package versions to nf.pipfreeze
     jupyter         # creates jupyter container with access to your app code exposed to :8888
         plots       # adds matplotlib and seaborn (trust me, you don't want to deal with this yourself)
     postgres        # postgres support, only libs at the moment, more to come
