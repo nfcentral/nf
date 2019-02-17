@@ -8,9 +8,18 @@ RUN apk add --no-cache bash git build-base openssl-dev readline-dev libffi-dev z
 RUN git clone --depth 1 https://github.com/pyenv/pyenv /python
 ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install {{python.version}}
-RUN find /python/versions/{{python.version}} -depth \( \( -type d -a \( -name test -o -name tests \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
 ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
-
+RUN apk add --no-cache rsync
+COPY .nf/pipframer /bin
+RUN chmod +x /bin/pipframer
+RUN pipframer install --prefix /requirements.sys --upgrade pip setuptools wheel
+ENV PATH="/requirements.sys/bin:${PATH}"
+ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
+RUN find /python/versions/{{python.version}} -depth \( \( -type d -a \( -name test -o -name tests -o -name __pycache__ \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
+RUN rm -rf /python/versions/{{python.version}}/lib/python{{python.version_shot}}/site-packages/*
+RUN rm -rf /python/versions/lib/python{{python.version_short}}/ensurepip
+RUN mv /python/versions/{{python.version}}/lib/libpython{{python.version_short}}m.a /
+RUN rm -rf /python/versions/{{python.version}}/lib/python{{python.version_short}}/config-*
 
 FROM base as python
 COPY --from=python_build /python/versions/{{python.version}} /python/versions/{{python.version}}
@@ -18,14 +27,7 @@ ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
 
 
 FROM python_build as requirements
-RUN apk add --no-cache rsync
-COPY .nf/pipframer /bin
-RUN chmod +x /bin/pipframer
-
-ENV PATH="/requirements.sys/bin:${PATH}"
-ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages"
-RUN pipframer install --upgrade --prefix /requirements.sys pip setuptools wheel
-RUN find /requirements.sys -type d -name __pycache__ -exec rm -rf '{}' + ;
+RUN mv /libpython{{python.version_short}}m.a /python/versions/{{python.version}}/lib/
 
 {{#dependencies_nf_build}}
 RUN apk add --no-cache {{_}}
@@ -77,7 +79,6 @@ RUN apk add --no-cache {{_}}
 {{#dependencies}}
 RUN apk add --no-cache {{_}}
 {{/dependencies}}
-COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.nf/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements/ /python/versions/{{python.version}}/
 
