@@ -97,6 +97,7 @@ COPY --from=requirements /requirements.dev/ /python/versions/{{python.version}}/
 
 
 FROM app_dev_base as code
+COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 ENV PYTHONPATH="/app"
 COPY .nf/.dir-locals.el /.dir-locals.el
 RUN apk add --no-cache openssh
