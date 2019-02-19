@@ -75,6 +75,7 @@ RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 RUN pip freeze >/nf.pipfreeze
 
+
 FROM python as app_base
 RUN mkdir /app
 WORKDIR /app
@@ -122,5 +123,6 @@ CMD ["jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--port=8888", "--LabApp.
 
 {{/features.jupyter}}
 FROM app_base as app
-COPY ./app/[^__pycache__]* /app/
+COPY ./app /app/
+RUN find /app -type d -name __pycache__ -exec rm -rf '{}' + ;
 CMD {{app_run_command}}
