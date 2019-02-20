@@ -7,6 +7,12 @@ import pystache
 import click
 
 
+if len(sys.argv) == 2 and sys.argv[1] == "install":
+    with open("/nf/nf", "r") as f:
+        print(f.read())
+    exit()
+
+
 @click.group()
 def cli():
     pass

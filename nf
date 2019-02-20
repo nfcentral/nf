@@ -10,6 +10,10 @@ if [ -z ${NF_VERSION} ]; then
     fi
 fi
 
+if [ -z "$(docker images -q nfcentral/nf:${NF_VERSION})" ]; then
+    docker pull nfcentral/nf:${NF_VERSION}
+fi
+
 if [ "0" = "$#" ]; then
     docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION}
     exit 1
@@ -41,7 +45,7 @@ if [ "selfupgrade" = "${command}" ]; then
     else
         docker tag nfcentral/nf:${newversion} nfcentral/nf:active
     fi
-    docker run --rm -v "$(pwd)":/project --entrypoint /usr/bin/dumb-init nfcentral/nf:${newversion} cat /nf/nf >"$0.upgrade"
+    docker run --rm -v "$(pwd)":/project nfcentral/nf:${newversion} install >"$0.upgrade"
     chmod +x "$0.upgrade"
     mv "$0.upgrade" "$0" && exit
 fi
