@@ -3,7 +3,7 @@
 set -e
 
 if [ "0" != "$#" ]; then
-    docker run --rm -v "$(pwd)":/project theiced/nf pipfreeze $*
+    docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION} pipfreeze $*
     exit
 fi
 

@@ -30,6 +30,12 @@ if os.path.isfile("nf.json"):
 
 
 @cli.command()
+@click.argument("version", default="latest")
+def selfupgrade(version):
+    pass
+
+
+@cli.command()
 @click.argument("name")
 def new(name):
     with open("/project/nf.json", "w") as f:
