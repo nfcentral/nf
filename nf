@@ -3,7 +3,7 @@
 set -e
 
 if [ -z ${NF_VERSION} ]; then
-    if [ -z "$(docker images -q theiced/nf:active)" ]; then
+    if [ -z "$(docker images -q nfcentral/nf:active)" ]; then
         NF_VERSION="latest"
     else
         NF_VERSION="active"
@@ -11,7 +11,7 @@ if [ -z ${NF_VERSION} ]; then
 fi
 
 if [ "0" = "$#" ]; then
-    docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION}
+    docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION}
     exit 1
 fi
 
@@ -19,13 +19,13 @@ command=$1
 shift
 
 if [ "--help" = "$1" ]; then
-    docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION} ${command} $*
+    docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION} ${command} $*
     exit 1
 fi
 
 if [ "selfupgrade" = "${command}" ]; then
     if [ "0" != "$#" ] && [ "1" != "$#" ]; then
-        docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION} ${command} $*
+        docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION} ${command} $*
         exit 1
     fi
     if [ "0" = "$#" ]; then
@@ -33,22 +33,22 @@ if [ "selfupgrade" = "${command}" ]; then
     else
         newversion=$1
     fi
-    docker pull theiced/nf:${newversion}
+    docker pull nfcentral/nf:${newversion}
     if [ "latest" = "${newversion}" ]; then
-        if [ ! -z "$(docker images -q theiced/nf:active)" ]; then
-            docker rmi theiced/nf:active
+        if [ ! -z "$(docker images -q nfcentral/nf:active)" ]; then
+            docker rmi nfcentral/nf:active
         fi
     else
-        docker tag theiced/nf:${newversion} theiced/nf:active
+        docker tag nfcentral/nf:${newversion} nfcentral/nf:active
     fi
-    docker run --rm -v "$(pwd)":/project --entrypoint /usr/bin/dumb-init theiced/nf:${newversion} cat /nf/nf >"$0.upgrade"
+    docker run --rm -v "$(pwd)":/project --entrypoint /usr/bin/dumb-init nfcentral/nf:${newversion} cat /nf/nf >"$0.upgrade"
     chmod +x "$0.upgrade"
     mv "$0.upgrade" "$0" && exit
 fi
 
 if [ "new" = "${command}" ]; then
     if [ "0" = "$#" ]; then
-        docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION} ${command} $*
+        docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION} ${command} $*
         exit 1
     fi
     name=$1
@@ -58,7 +58,7 @@ if [ "new" = "${command}" ]; then
         exit 1
     fi
     mkdir -p dir
-    docker run --rm -v "$(pwd)/${name}":/project theiced/nf:${NF_VERSION} ${command} ${name} $*
+    docker run --rm -v "$(pwd)/${name}":/project nfcentral/nf:${NF_VERSION} ${command} ${name} $*
     exit 0
 fi
 
@@ -67,4 +67,4 @@ if [ -f ".nf/commands/${command}" ]; then
     exit 0
 fi
 
-docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION} ${command} $*
+docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION} ${command} $*

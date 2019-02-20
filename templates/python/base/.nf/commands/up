@@ -3,7 +3,7 @@
 set -e
 
 if [ "0" != "$#" ]; then
-    docker run --rm -v "$(pwd)":/project theiced/nf:${NF_VERSION} up $*
+    docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION} up $*
     exit 1
 fi
 
