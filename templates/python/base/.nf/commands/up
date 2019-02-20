@@ -1,3 +1,10 @@
 #!/bin/sh
 
+set -e
+
+if [ "0" != "$#" ]; then
+    docker run --rm -v "$(pwd)":/project theiced/nf up $*
+    exit 1
+fi
+
 docker-compose -f .nf/docker-compose.yml --project-directory . up

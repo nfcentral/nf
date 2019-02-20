@@ -1,8 +1,15 @@
 import os
+import sys
 import re
 import json
 import importlib
 import pystache
+import click
+
+
+@click.group()
+def cli():
+    pass
 
 
 def templates_list(name):
@@ -13,6 +20,27 @@ def templates_list(name):
     return templates
 
 
+if os.path.isfile("nf.json"):
+    with open("nf.json", "r") as f:
+        config = json.loads(f.read())
+    templates = templates_list(config["template"])
+    for template in templates:
+        if "commands" in dir(template):
+            template.commands(cli)
+
+
+@cli.command()
+@click.argument("name")
+def new(name):
+    with open("/project/nf.json", "w") as f:
+        f.write(json.dumps({
+            "name": name,
+            "template": "python/starlette",
+            "python": "3.7.2",
+            "features": []}, indent=2))
+
+
+@cli.command()
 def generate():
     with open("nf.json", "r") as f:
         config = json.loads(f.read())
@@ -81,4 +109,5 @@ def generate():
             f.write(content)
 
 
-generate()
+sys.argv[0] = "nf"
+cli()

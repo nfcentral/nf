@@ -1,4 +1,10 @@
 #!/bin/sh
 
 set -e
-docker run --network host --rm {{name}}_requirements cat /nf.pipfreeze | tee nf.pipfreeze >/dev/null
+
+if [ "0" != "$#" ]; then
+    docker run --rm -v "$(pwd)":/project theiced/nf pipfreeze $*
+    exit
+fi
+
+docker run --network host --rm {{name}}_requirements cat /nf.pipfreeze >nf.pipfreeze

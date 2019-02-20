@@ -1,3 +1,6 @@
+import click
+
+
 NAME = "python/base"
 PARENTS = ["common"]
 FEATURES = ["jupyter",
@@ -75,3 +78,17 @@ def prepare(config, context):
             "version_short": ".".join(config["python"].split(".")[:2])
         }
     })
+
+
+def commands(cli):
+    @cli.command()
+    def build():
+        pass
+
+    @cli.command()
+    def up():
+        pass
+
+    @cli.command()
+    def pipfreeze():
+        pass

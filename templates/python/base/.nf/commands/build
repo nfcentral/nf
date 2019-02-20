@@ -1,9 +1,16 @@
 #!/bin/sh
 
 set -e
+
+if [ "0" != "$#" ]; then
+    docker run --rm -v "$(pwd)":/project theiced/nf build $*
+    exit 1
+fi
+
 if [ -z "$(docker ps -q -f name=nfcache)" ]; then
     docker run --rm -d --name nfcache -v nfcache:/data -p 873:873 nfcentral/nfcache:latest
 fi
+
 DOCKER_BUILDKIT=1 docker build --network host --target requirements -t {{name}}_requirements -f .nf/Dockerfile .
 DOCKER_BUILDKIT=1 docker build --network host --target code -t {{name}}_code -f .nf/Dockerfile .
 DOCKER_BUILDKIT=1 docker build --network host --target app_dev -t {{name}}_dev -f .nf/Dockerfile .
