@@ -3,8 +3,14 @@ import sys
 import re
 import json
 import importlib
+import collections
 import pystache
 import click
+
+
+class OrderedGroup(click.Group):
+    def list_commands(self, ctx):
+        return self.commands
 
 
 with open("/nf/VERSION", "r") as f:
@@ -23,11 +29,6 @@ if len(sys.argv) == 2 and sys.argv[1] == "nfcli":
     exit()
 
 
-@click.group()
-def cli():
-    pass
-
-
 def templates_list(name):
     template = importlib.import_module("templates.{}".format(name.replace("/", ".")))
     templates = [template]
@@ -36,13 +37,9 @@ def templates_list(name):
     return templates
 
 
-if os.path.isfile("nf.json"):
-    with open("nf.json", "r") as f:
-        config = json.loads(f.read())
-    templates = templates_list(config["template"])
-    for template in templates:
-        if "commands" in dir(template):
-            template.commands(cli)
+@click.group(cls=OrderedGroup, commands=collections.OrderedDict())
+def cli():
+    pass
 
 
 @cli.command()
@@ -134,6 +131,14 @@ def generate():
         with open(ft, "w") as f:
             f.write(content)
 
+
+if os.path.isfile("nf.json"):
+    with open("nf.json", "r") as f:
+        config = json.loads(f.read())
+    templates = templates_list(config["template"])
+    for template in templates:
+        if "commands" in dir(template):
+            template.commands(cli)
 
 sys.argv[0] = "nf"
 cli()
