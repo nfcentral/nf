@@ -3,12 +3,12 @@
 set -e
 
 if [ "0" != "$#" ]; then
-    docker run --rm -v "$(pwd)":/project nfcentral/nf:${NF_VERSION} build $*
+    docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} build $*
     exit 1
 fi
 
 if [ -z "$(docker ps -q -f name=nfcache)" ]; then
-    docker run --rm -d --name nfcache -v nfcache:/data -p 873:873 nfcentral/nfcache:latest
+    docker run --rm -d --name nfcache -v nfcache:/data -p 873:873 nfcentral/nfcache:0.0.1
 fi
 
 DOCKER_BUILDKIT=1 docker build --network host --target requirements -t {{name}}_requirements -f .nf/Dockerfile .

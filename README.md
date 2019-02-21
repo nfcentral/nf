@@ -4,7 +4,7 @@ NF is Not Framework
 Installation
 ------------
 
-Run `docker run --rm nfcentral/nf install >nf && chmod +x nf`.
+Run `docker run --rm nfcentral/nf nfinstall >nf && chmod +x nf`.
 
 Usage
 -----

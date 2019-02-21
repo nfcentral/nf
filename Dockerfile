@@ -45,7 +45,9 @@ RUN mkdir /project
 WORKDIR /project
 ENV PYTHONPATH="/nf"
 COPY --from=requirements /requirements/ /python/versions/3.7.2/
+COPY VERSION /nf/
 COPY nf.py /nf/
 COPY templates/ /nf/templates
 COPY nf /nf/
+COPY nfcli /nf/
 ENTRYPOINT ["/usr/bin/dumb-init", "python", "/nf/nf.py"]

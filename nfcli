@@ -1,0 +1,49 @@
+#!/bin/sh
+
+set -e
+
+if [ "0" = "$#" ]; then
+    docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION}
+    exit
+fi
+
+command=$1
+shift
+
+if [ "--help" = "$1" ]; then
+    docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} ${command} $*
+    exit
+fi
+
+if [ "nfupgrade" = "${command}" ]; then
+    docker pull ${NF_IMAGE}:${NF_VERSION}
+    exit
+fi
+
+if [ "nffreeze" = "${command}" ]; then
+    printf "${NF_IMAGE}:${NF_VERSION}" >nf.nffreeze
+    exit
+fi
+
+if [ "new" = "${command}" ]; then
+    if [ "0" = "$#" ]; then
+        docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} ${command} $*
+        exit 1
+    fi
+    name=$1
+    shift
+    if [ -d "${name}" ]; then
+        echo "Error: directory ${name} already exists."
+        exit 1
+    fi
+    mkdir -p dir
+    docker run --rm -v "$(pwd)/${name}":/project ${NF_IMAGE}:${NF_VERSION} ${command} ${name} $*
+    exit
+fi
+
+if [ -f ".nf/commands/${command}" ]; then
+    NF_IMAGE=${NF_IMAGE} NF_VERSION=${NF_VERSION} sh .nf/commands/${command} $*
+    exit
+fi
+
+docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} ${command} $*

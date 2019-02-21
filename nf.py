@@ -7,8 +7,18 @@ import pystache
 import click
 
 
-if len(sys.argv) == 2 and sys.argv[1] == "install":
+with open("/nf/VERSION", "r") as f:
+    VERSION = f.read()
+
+
+if len(sys.argv) == 2 and sys.argv[1] == "nfinstall":
     with open("/nf/nf", "r") as f:
+        print(f.read())
+    exit()
+
+
+if len(sys.argv) == 2 and sys.argv[1] == "nfcli":
+    with open("/nf/nfcli", "r") as f:
         print(f.read())
     exit()
 
@@ -37,7 +47,12 @@ if os.path.isfile("nf.json"):
 
 @cli.command()
 @click.argument("version", default="latest")
-def selfupgrade(version):
+def nfupgrade(version):
+    pass
+
+
+@cli.command()
+def nffreeze():
     pass
 
 
