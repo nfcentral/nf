@@ -46,8 +46,7 @@ if os.path.isfile("nf.json"):
 
 
 @cli.command()
-@click.argument("version", default="latest")
-def nfupgrade(version):
+def nfupgrade():
     pass
 
 
