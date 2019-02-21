@@ -36,7 +36,6 @@ if [ "new" = "${command}" ]; then
         echo "Error: directory ${name} already exists."
         exit 1
     fi
-    mkdir -p dir
     docker run --rm -v "$(pwd)/${name}":/project ${NF_IMAGE}:${NF_VERSION} ${command} ${name} $*
     exit
 fi
