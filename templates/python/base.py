@@ -4,8 +4,7 @@ import click
 NAME = "python/base"
 PARENTS = ["common"]
 FEATURES = ["jupyter",
-            "jupyter_plots",
-            "postgres"]
+            "jupyter_plots"]
 
 FILES = {
     "": [".nf/commands/build",
@@ -30,18 +29,6 @@ EXAMPLE_FILES = {
 LISTS = {
     "gitignore": {
         "": ["__pycache__"]
-    },
-    "requirements_nf": {
-        "": ["uvloop",
-             "ujson"],
-        "postgres": ["psycopg2",
-                     "asyncpgsa"]
-    },
-    "dependencies_nf_build": {
-        "postgres": ["postgresql-dev"]
-    },
-    "dependencies_nf": {
-        "postgres": ["libpq"]
     },
     "requirements_nf_dev": {
         "jupyter": ["jupyterlab"],
@@ -85,9 +72,11 @@ def commands(cli):
     def build():
         pass
 
+
     @cli.command()
     def up():
         pass
+
 
     @cli.command()
     def pipfreeze():

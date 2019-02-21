@@ -1,5 +1,5 @@
 from starlette.applications import Starlette
-from starlette.responses import UJSONResponse
+from starlette.responses import JSONResponse
 
 
 app = Starlette("{{name}}")
@@ -7,4 +7,4 @@ app = Starlette("{{name}}")
 
 @app.route("/")
 async def index(request):
-    return UJSONResponse({"answer": 42})
+    return JSONResponse({"answer": 42})
