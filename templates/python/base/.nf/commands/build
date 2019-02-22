@@ -2,6 +2,8 @@
 
 set -e
 
+trap 'docker stop nfcache-0.0.1' EXIT
+
 if [ "0" != "$#" ]; then
     docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} build $*
     exit 1
@@ -18,5 +20,3 @@ DOCKER_BUILDKIT=1 docker build --network host --target app_dev -t {{name}}_dev -
 DOCKER_BUILDKIT=1 docker build --network host --target jupyter -t {{name}}_jupyter -f .nf/Dockerfile .
 {{/features.jupyter}}
 DOCKER_BUILDKIT=1 docker build --network host --target app -t {{name}} -f .nf/Dockerfile .
-
-docker stop nfcache-0.0.1
