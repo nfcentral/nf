@@ -3,6 +3,7 @@ import sys
 import re
 import json
 import importlib
+import hashlib
 import collections
 import pystache
 import click
@@ -37,6 +38,11 @@ def templates_list(name):
     return templates
 
 
+def progress(ft, ftl, msg):
+    format_str = "{:" + str(ftl) + "} {}"
+    print(format_str.format(ft, msg))
+
+
 @click.group(cls=OrderedGroup, commands=collections.OrderedDict())
 def cli():
     pass
@@ -60,7 +66,7 @@ def new(name):
             "name": name,
             "template": "python/starlette",
             "python": "3.7.2",
-            "features": []}, indent=2))
+            "features": []}, indent=4))
 
 
 @cli.command()
@@ -117,19 +123,63 @@ def generate():
             context[l].extend([{"_": e} for e in config.get(l, [])])
 
     renderer = pystache.Renderer(escape=lambda u: u)
-
     root = os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates")
+    generated = []
+    tree = {}
+    checksums = {}
     for ((ff, ft), e) in files:
         ff = os.path.join(root, renderer.render(ff, context))
         ft = pystache.render(ft, context)
-        if e and os.path.exists(ft):
-            continue
-        with open(ff) as f:
-            content = renderer.render(f.read(), context)
+        if not ft in tree:
+            with open(ff) as f:
+                content = renderer.render(f.read(), context)
+            tree[ft] = content
+            checksums[ft] = hashlib.md5(content.encode("utf-8")).hexdigest()
+            generated.append((ft, e, checksums[ft]))
+
+    generated_before = []
+    if os.path.exists(".nf/generated.json"):
+        with open(".nf/generated.json", "r") as f:
+            generated_before = json.loads(f.read())
+
+    checksums_before = {}
+    checksums_real = {}
+    for (ft, e, checksum) in generated_before:
+        checksums_before[ft] = checksum
+        if os.path.exists(ft):
+            with open(ft, "r") as f:
+                checksums_real[ft] = hashlib.md5(f.read().encode("utf-8")).hexdigest()
+
+    generated_merged = []
+
+    ftl = max([len(ft) for ft in list(checksums.keys()) + list(checksums_before.keys())])
+
+    for (ft, e, checksum) in generated_before:
+        if not ft in checksums:
+            if not e or checksums_real.get(ft, None) == checksum:
+                progress(ft, ftl, "removing previously generated")
+                os.unlink(ft)
+            else:
+                progress(ft, ftl, "preserving modified example not existing in new tree")
+                generated_merged.append((ft, e, checksum))
+
+    for (ft, e, checksum) in generated:
         if os.path.dirname(ft) != "":
             os.makedirs(os.path.dirname(ft), exist_ok=True)
-        with open(ft, "w") as f:
-            f.write(content)
+        if e and ft in checksums_real and checksums_real[ft] != checksums_before[ft]:
+            progress(ft, ftl, "preserving modified example")
+            generated_merged.append((ft, e, checksums_before[ft]))
+            continue
+        if not ft in checksums_real or checksums_real[ft] != checksums[ft]:
+            progress(ft, ftl, "{}generating {}".format("re" if ft in checksums_real else "", "example " if e else ""))
+            with open(ft, "w") as f:
+                f.write(tree[ft])
+        else:
+            progress(ft, ftl, "ignoring unmodified")
+        generated_merged.append((ft, e, checksum))
+
+    with open(".nf/generated.json", "w") as f:
+        f.write(json.dumps(generated_merged))
 
 
 if os.path.isfile("nf.json"):

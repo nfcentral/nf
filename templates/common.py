@@ -3,10 +3,10 @@ PARENTS = []
 FEATURES = []
 
 FILES = {
-    "": [("dotgitignore", ".gitignore")]
 }
 
 EXAMPLE_FILES = {
+    "": [("dotgitignore", ".gitignore")]
 }
 
 LISTS = {
