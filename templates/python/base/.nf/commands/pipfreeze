@@ -7,4 +7,4 @@ if [ "0" != "$#" ]; then
     exit
 fi
 
-docker run --network host --rm {{name}}_requirements cat /nf.pipfreeze >nf.pipfreeze
+docker run --network host --rm {{name}}_requirements pip freeze >nf.pipfreeze

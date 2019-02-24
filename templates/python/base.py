@@ -10,7 +10,6 @@ FILES = {
     "": [".nf/commands/build",
          ".nf/commands/pipfreeze",
          ".nf/commands/up",
-         ".nf/pipframer",
          ".nf/Dockerfile",
          ".nf/docker-compose.yml",
          ".nf/requirements.nf.txt",

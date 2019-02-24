@@ -2,15 +2,9 @@
 
 set -e
 
-trap 'docker stop nfcache-0.0.1' EXIT
-
 if [ "0" != "$#" ]; then
     docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} build $*
     exit 1
-fi
-
-if [ -z "$(docker ps -q -f name=nfcache-0.0.1)" ]; then
-    docker run --rm -d --name nfcache-0.0.1 -v nfcache:/data -p 873:873 nfcentral/nfcache:0.0.1
 fi
 
 DOCKER_BUILDKIT=1 docker build --network host --target requirements -t {{name}}_requirements -f .nf/Dockerfile .
