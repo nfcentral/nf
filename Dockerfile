@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:experimental
 
 FROM alpine:3.9 as base
-RUN apk add --no-cache dumb-init ca-certificates libc6-compat openssl readline libffi zlib bzip2 sqlite-dev
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add dumb-init ca-certificates libc6-compat openssl readline libffi zlib bzip2 sqlite-dev
 
 
 FROM base as python_build
-RUN apk add --no-cache bash git build-base openssl-dev readline-dev libffi-dev zlib-dev bzip2-dev
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add bash git build-base openssl-dev readline-dev libffi-dev zlib-dev bzip2-dev
 RUN git clone --depth 1 https://github.com/pyenv/pyenv /python
 ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install 3.7.2
 ENV PATH="/python/versions/3.7.2/bin:${PATH}"
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys --upgrade pip setuptools wheel
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys --upgrade pip setuptools wheel
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python3.7/site-packages:${PYTHONPATH}"
 RUN find /python/versions/3.7.2 -depth \( \( -type d -a \( -name test -o -name tests -o -name __pycache__ \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
@@ -34,7 +34,7 @@ COPY requirements.txt /
 ENV PATH="/requirements/bin:${PATH}"
 ENV PYTHONPATH="/requirements/lib/python3.7/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements -r requirements.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements -r requirements.txt
 RUN find /requirements -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 

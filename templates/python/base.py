@@ -31,7 +31,7 @@ LISTS = {
     },
     "requirements_nf_dev": {
         "jupyter": ["jupyterlab"],
-        "jupyter_plots": ["pandas!=0.24.0,!=0.24.1",
+        "jupyter_plots": ["pandas!=0.24.0,!=0.24.1", # FIXME: can't be installed with latest pip
                           "matplotlib",
                           "seaborn"]
     },

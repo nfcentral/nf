@@ -1,18 +1,18 @@
 # syntax=docker/dockerfile:experimental
 
 FROM alpine:3.9 as base
-RUN apk add --no-cache dumb-init ca-certificates libc6-compat openssl readline libffi zlib bzip2 sqlite-dev
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add dumb-init ca-certificates libc6-compat openssl readline libffi zlib bzip2 sqlite-dev
 ENTRYPOINT ["/usr/bin/dumb-init"]
 
 
 FROM base as python_build
-RUN apk add --no-cache bash git build-base openssl-dev readline-dev libffi-dev zlib-dev bzip2-dev
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add bash git build-base openssl-dev readline-dev libffi-dev zlib-dev bzip2-dev
 RUN git clone --depth 1 https://github.com/pyenv/pyenv /python
 ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install {{python.version}}
 ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
 ADD nf.pipfreeze /
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys -c /nf.pipfreeze --upgrade pip setuptools wheel
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys -c /nf.pipfreeze --upgrade pip setuptools wheel
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN find /python/versions/{{python.version}} -depth \( \( -type d -a \( -name test -o -name tests -o -name __pycache__ \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
@@ -33,43 +33,43 @@ ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
 
 FROM python_build as requirements
 {{#dependencies_nf_build}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_nf_build}}
 COPY .nf/requirements.nf.txt /
 ENV PATH="/requirements.nf/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements.nf -c /nf.pipfreeze -r requirements.nf.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.nf -c /nf.pipfreeze -r requirements.nf.txt
 RUN find /requirements.nf -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_build}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_build}}
 COPY requirements.txt /
 ENV PATH="/requirements/bin:${PATH}"
 ENV PYTHONPATH="/requirements/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements -c /nf.pipfreeze -r requirements.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements -c /nf.pipfreeze -r requirements.txt
 RUN find /requirements -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_dev_build}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_nf_dev_build}}
 COPY .nf/requirements.nf.dev.txt /
 ENV PATH="/requirements.nf.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf.dev
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements.nf.dev -c /nf.pipfreeze -r requirements.nf.dev.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.nf.dev -c /nf.pipfreeze -r requirements.nf.dev.txt
 RUN find /requirements.nf.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_dev_build}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_dev_build}}
 COPY requirements.dev.txt /
 ENV PATH="/requirements.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.dev
-RUN --mount=target=/root/.cache/pip,type=cache pip install --prefix /requirements.dev -c /nf.pipfreeze -r requirements.dev.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.dev -c /nf.pipfreeze -r requirements.dev.txt
 RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 
@@ -77,10 +77,10 @@ FROM python as app_base
 RUN mkdir /app
 WORKDIR /app
 {{#dependencies_nf}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_nf}}
 {{#dependencies}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies}}
 COPY --from=requirements /requirements.nf/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements/ /python/versions/{{python.version}}/
@@ -88,10 +88,10 @@ COPY --from=requirements /requirements/ /python/versions/{{python.version}}/
 
 FROM app_base as app_dev_base
 {{#dependencies_nf_dev}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_nf_dev}}
 {{#dependencies_dev}}
-RUN apk add --no-cache {{_}}
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_dev}}
 COPY --from=requirements /requirements.nf.dev/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.dev/ /python/versions/{{python.version}}/
@@ -101,7 +101,7 @@ FROM app_dev_base as code
 COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 ENV PYTHONPATH="/app"
 COPY .nf/.dir-locals.el /.dir-locals.el
-RUN apk add --no-cache openssh
+RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add openssh
 COPY .nf/ssh_host_* /etc/ssh/
 RUN chmod 0600 /etc/ssh/ssh_host_*
 CMD ["/usr/sbin/sshd", "-o", "ListenAddress=0.0.0.0", "-o", "AllowTcpForwarding=yes", "-o", "PasswordAuthentication=yes", "-o", "PermitEmptyPasswords=yes", "-o", "PermitRootLogin=yes", "-D"]
