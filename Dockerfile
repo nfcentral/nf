@@ -50,4 +50,6 @@ COPY nf.py /nf/
 COPY templates/ /nf/templates
 COPY nf /nf/
 COPY nfcli /nf/
+ADD http://raw.githubusercontent.com/nfcentral/nfshared/master/ssh_host_ecdsa_key /nf/templates/common/.nf/
+ADD http://raw.githubusercontent.com/nfcentral/nfshared/master/ssh_host_ecdsa_key.pub /nf/templates/common/.nf/
 ENTRYPOINT ["/usr/bin/dumb-init", "python", "/nf/nf.py"]
