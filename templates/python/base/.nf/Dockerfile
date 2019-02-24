@@ -12,7 +12,7 @@ ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install {{python.version}}
 ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
 ADD nf.pipfreeze /
-RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys -c /nf.pipfreeze --upgrade "pip<19.0" setuptools wheel
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys -c /nf.pipfreeze --upgrade pip setuptools wheel
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN find /python/versions/{{python.version}} -depth \( \( -type d -a \( -name test -o -name tests -o -name __pycache__ \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
@@ -39,7 +39,7 @@ COPY .nf/requirements.nf.txt /
 ENV PATH="/requirements.nf/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf
-RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.nf -c /nf.pipfreeze -r requirements.nf.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --use-pep517 --prefix /requirements.nf -c /nf.pipfreeze -r requirements.nf.txt
 RUN find /requirements.nf -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_build}}
@@ -49,7 +49,7 @@ COPY requirements.txt /
 ENV PATH="/requirements/bin:${PATH}"
 ENV PYTHONPATH="/requirements/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements
-RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements -c /nf.pipfreeze -r requirements.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --use-pep517 --prefix /requirements -c /nf.pipfreeze -r requirements.txt
 RUN find /requirements -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_nf_dev_build}}
@@ -59,7 +59,7 @@ COPY .nf/requirements.nf.dev.txt /
 ENV PATH="/requirements.nf.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.nf.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.nf.dev
-RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.nf.dev -c /nf.pipfreeze -r requirements.nf.dev.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --use-pep517 --prefix /requirements.nf.dev -c /nf.pipfreeze -r requirements.nf.dev.txt
 RUN find /requirements.nf.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 {{#dependencies_dev_build}}
@@ -69,7 +69,7 @@ COPY requirements.dev.txt /
 ENV PATH="/requirements.dev/bin:${PATH}"
 ENV PYTHONPATH="/requirements.dev/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN mkdir /requirements.dev
-RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.dev -c /nf.pipfreeze -r requirements.dev.txt
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --use-pep517 --prefix /requirements.dev -c /nf.pipfreeze -r requirements.dev.txt
 RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 
 

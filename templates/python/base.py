@@ -31,7 +31,8 @@ LISTS = {
     },
     "requirements_nf_dev": {
         "jupyter": ["jupyterlab"],
-        "jupyter_plots": ["matplotlib",
+        "jupyter_plots": ["pandas!=0.24.0,!=0.24.1",
+                          "matplotlib",
                           "seaborn"]
     },
     "dependencies_nf_dev_build": {
