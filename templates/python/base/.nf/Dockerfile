@@ -93,12 +93,12 @@ RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{#dependencies_dev}}
 RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add {{_}}
 {{/dependencies_dev}}
+COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.nf.dev/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.dev/ /python/versions/{{python.version}}/
 
 
 FROM app_dev_base as code
-COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 ENV PYTHONPATH="/app"
 COPY .nf/.dir-locals.el /.dir-locals.el
 RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add openssh
