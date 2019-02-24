@@ -4,7 +4,7 @@ NF is Not Framework
 Installation
 ------------
 
-Run `docker run --rm nfcentral/nf nfinstall >nf && chmod +x nf`.
+You'll need docker 18.09+ with buildkit support. To install nf run `docker run --rm nfcentral/nf nfinstall >nf && chmod +x nf` and place generated `nf` binary to `$PATH`.
 
 Usage
 -----
