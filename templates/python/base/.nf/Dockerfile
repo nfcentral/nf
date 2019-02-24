@@ -12,7 +12,7 @@ ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install {{python.version}}
 ENV PATH="/python/versions/{{python.version}}/bin:${PATH}"
 ADD nf.pipfreeze /
-RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys -c /nf.pipfreeze --upgrade pip setuptools wheel
+RUN --mount=id=nfpip,target=/root/.cache/pip,type=cache pip install --prefix /requirements.sys -c /nf.pipfreeze --upgrade "pip<19.0" setuptools wheel
 ENV PATH="/requirements.sys/bin:${PATH}"
 ENV PYTHONPATH="/requirements.sys/lib/python{{python.version_short}}/site-packages:${PYTHONPATH}"
 RUN find /python/versions/{{python.version}} -depth \( \( -type d -a \( -name test -o -name tests -o -name __pycache__ \) \) -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \) -exec rm -rf '{}' + ;
@@ -109,6 +109,7 @@ CMD ["/usr/sbin/sshd", "-o", "ListenAddress=0.0.0.0", "-o", "AllowTcpForwarding=
 
 FROM app_dev_base as app_dev
 CMD {{app_run_dev_command}}
+
 
 {{#features.jupyter}}
 FROM app_dev_base as jupyter

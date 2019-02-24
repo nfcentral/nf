@@ -31,8 +31,7 @@ LISTS = {
     },
     "requirements_nf_dev": {
         "jupyter": ["jupyterlab"],
-        "jupyter_plots": ["pandas!=0.24.0,!=0.24.1", # FIXME: can't be installed with latest pip
-                          "matplotlib",
+        "jupyter_plots": ["matplotlib",
                           "seaborn"]
     },
     "dependencies_nf_dev_build": {
@@ -68,7 +67,8 @@ def prepare(config, context):
 
 def commands(cli):
     @cli.command()
-    def build():
+    @click.option("--verbose/--no-verbose", default=False)
+    def build(verbose):
         pass
 
 

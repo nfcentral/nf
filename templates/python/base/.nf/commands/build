@@ -2,15 +2,23 @@
 
 set -e
 
+progress="auto"
+if [ "1" = "$#" ] && ([ "--verbose" = "$1" ] || [ "--no-verbose" = "$1" ]); then
+    if [ "--verbose" = "$1" ]; then
+        progress="plain"
+    fi
+    shift
+fi
+
 if [ "0" != "$#" ]; then
     docker run --rm -v "$(pwd)":/project ${NF_IMAGE}:${NF_VERSION} build $*
     exit 1
 fi
 
-DOCKER_BUILDKIT=1 docker build --network host --target requirements -t {{name}}_requirements -f .nf/Dockerfile .
-DOCKER_BUILDKIT=1 docker build --network host --target code -t {{name}}_code -f .nf/Dockerfile .
-DOCKER_BUILDKIT=1 docker build --network host --target app_dev -t {{name}}_dev -f .nf/Dockerfile .
+DOCKER_BUILDKIT=1 docker build --progress=${progress} --network host --target requirements -t {{name}}_requirements -f .nf/Dockerfile .
+DOCKER_BUILDKIT=1 docker build --progress=${progress} --network host --target code -t {{name}}_code -f .nf/Dockerfile .
+DOCKER_BUILDKIT=1 docker build --progress=${progress} --network host --target app_dev -t {{name}}_dev -f .nf/Dockerfile .
 {{#features.jupyter}}
-DOCKER_BUILDKIT=1 docker build --network host --target jupyter -t {{name}}_jupyter -f .nf/Dockerfile .
+DOCKER_BUILDKIT=1 docker build --progress=${progress} --network host --target jupyter -t {{name}}_jupyter -f .nf/Dockerfile .
 {{/features.jupyter}}
-DOCKER_BUILDKIT=1 docker build --network host --target app -t {{name}} -f .nf/Dockerfile .
+DOCKER_BUILDKIT=1 docker build --progress=${progress} --network host --target app -t {{name}} -f .nf/Dockerfile .
