@@ -1,11 +1,19 @@
 # syntax=docker/dockerfile:experimental
 
-FROM alpine:3.9 as base
-RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add dumb-init ca-certificates libc6-compat openssl readline libffi zlib bzip2 sqlite-dev
+FROM debian:9.7-slim as base_build
+RUN rm /etc/apt/apt.conf.d/docker-clean
+RUN echo "Binary::apt::APT::Keep-Downloaded-Packages \"1\";" > /etc/apt/apt.conf.d/keep-archives
+RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,target=/var/lib/apt,type=cache apt-get update
+RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,target=/var/lib/apt,type=cache apt-get upgrade -y
+
+
+FROM scratch as base
+COPY --from=base_build / /
+RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,target=/var/lib/apt,type=cache apt-get --no-install-recommends -y install dumb-init ca-certificates libssl1.1 libreadline7 libffi6 zlib1g libbz2-1.0 libsqlite3-0
 
 
 FROM base as python_build
-RUN --mount=id=nfapk,target=/etc/apk/cache,type=cache apk add bash git build-base openssl-dev readline-dev libffi-dev zlib-dev bzip2-dev
+RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,target=/var/lib/apt,type=cache apt-get --no-install-recommends -y install curl git build-essential libssl-dev libreadline-dev libffi-dev zlib1g-dev libbz2-dev libsqlite3-dev
 RUN git clone --depth 1 https://github.com/pyenv/pyenv /python
 ENV PYENV_ROOT=/python
 RUN /python/bin/pyenv install 3.7.2

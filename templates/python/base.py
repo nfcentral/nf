@@ -31,21 +31,20 @@ LISTS = {
     },
     "requirements_nf_dev": {
         "jupyter": ["jupyterlab"],
-        "jupyter_plots": ["pandas!=0.24.0,!=0.24.1",
-                          "matplotlib",
+        "jupyter_plots": ["matplotlib",
                           "seaborn"]
     },
     "dependencies_nf_dev_build": {
-        "jupyter": ["zeromq-dev"],
+        "jupyter": ["libzmq3-dev"],
         "jupyter_plots": ["libpng-dev",
-                          "freetype-dev",
-                          "openblas-dev"]
+                          "libfreetype6-dev",
+                          "libopenblas-dev"]
     },
     "dependencies_nf_dev": {
-        "jupyter": ["libzmq"],
-        "jupyter_plots": ["libpng",
-                          "freetype",
-                          "openblas"]
+        "jupyter": ["libzmq3-dev"],
+        "jupyter_plots": ["libpng16-16",
+                          "libfreetype6",
+                          "libopenblas-base"]
     }
 }
 
