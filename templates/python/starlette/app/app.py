@@ -1,7 +1,9 @@
+import nf
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 
 
+config = nf.config.get()
 app = Starlette("{{name}}")
 
 

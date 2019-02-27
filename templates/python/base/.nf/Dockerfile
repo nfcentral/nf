@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:experimental
 
-
 FROM debian:9.7-slim as base_build
 RUN rm /etc/apt/apt.conf.d/docker-clean
 RUN echo "Binary::apt::APT::Keep-Downloaded-Packages \"1\";" > /etc/apt/apt.conf.d/keep-archives
@@ -85,6 +84,7 @@ RUN find /requirements.dev -type d -name __pycache__ -exec rm -rf '{}' + ;
 FROM python as app_base
 RUN mkdir /app
 WORKDIR /app
+ENV PYTHONPATH="/app:/app/.nf"
 {{#dependencies_nf?}}
 RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,target=/var/lib/apt,type=cache apt-get --no-install-recommends -y install{{#dependencies_nf}} {{_}}{{/dependencies_nf}}
 {{/dependencies_nf?}}
@@ -105,10 +105,12 @@ RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,t
 COPY --from=requirements /requirements.sys/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.nf.dev/ /python/versions/{{python.version}}/
 COPY --from=requirements /requirements.dev/ /python/versions/{{python.version}}/
+{{#environment_dev_docker}}
+ENV {{_}}
+{{/environment_dev_docker}}
 
 
 FROM app_dev_base as code
-ENV PYTHONPATH="/app"
 RUN passwd -d root
 COPY .nf/.dir-locals.el /.dir-locals.el
 RUN --mount=id=nfaptcache,target=/var/cache/apt,type=cache --mount=id=nfaptlib,target=/var/lib/apt,type=cache apt-get --no-install-recommends -y install openssh-server
@@ -124,7 +126,6 @@ CMD {{app_run_dev_command}}
 
 {{#features.jupyter}}
 FROM app_dev_base as jupyter
-ENV PYTHONPATH="/app"
 RUN mkdir /notebooks
 WORKDIR /notebooks
 CMD ["jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--port=8888", "--LabApp.token="]
