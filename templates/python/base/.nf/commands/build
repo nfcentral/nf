@@ -3,10 +3,8 @@
 set -e
 
 progress="auto"
-if [ "1" = "$#" ] && ([ "--verbose" = "$1" ] || [ "--no-verbose" = "$1" ]); then
-    if [ "--verbose" = "$1" ]; then
-        progress="plain"
-    fi
+if [ "1" = "$#" ] && ([ "-v" = "$1" ] || [ "--verbose" = "$1" ]); then
+    progress="plain"
     shift
 fi
 

@@ -91,7 +91,7 @@ def prepare(config, context):
 
 def commands(cli):
     @cli.command()
-    @click.option("--verbose/--no-verbose", default=False)
+    @click.option("-v", "--verbose", is_flag=True, default=False)
     def build(verbose):
         pass
 
