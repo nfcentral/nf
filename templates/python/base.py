@@ -28,7 +28,7 @@ EXAMPLE_FILES = {
     "": ["requirements.txt",
          "requirements.dev.txt",
          "nf.pipfreeze",
-         "app/config.schema.json",
+         "app/etc/config.schema.json",
          "environment.dev.txt"]
 }
 
@@ -67,8 +67,8 @@ def prepare(config, context):
     nfconfig = imp.new_module("nfconfig")
     with open("/nf/templates/python/base/app/.nf/nf/config.py", "r") as f:
         exec(f.read(), nfconfig.__dict__)
-    if os.path.exists("/project/app/config.schema.json"):
-        with open("/project/app/config.schema.json", "r") as f:
+    if os.path.exists("/project/app/etc/config.schema.json"):
+        with open("/project/app/etc/config.schema.json", "r") as f:
             config_entries = nfconfig.parse(json.loads(f.read()))
     else:
         config_entries = []

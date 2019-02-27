@@ -50,6 +50,8 @@ def _to_dict(config_list):
 
 
 def parse(schema, required=False, path=[]):
+    if not schema:
+        return []
     if schema["type"] == "object":
         result = []
         for name in schema["properties"].keys():

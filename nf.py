@@ -161,19 +161,21 @@ def generate():
             if not e or checksums_real.get(ft, None) == checksum:
                 progress(ft, e, checksums_real.get(ft, None) == checksum, "D")
                 os.unlink(ft)
-            else:
-                progress(ft, e, checksums_real.get(ft, None) == checksum, ".")
+            elif checksums_real.get(ft, None) is not None:
+                progress(ft, e, checksums_real.get(ft, None) == checksum, "J")
                 generated_merged.append((ft, e, checksum))
+            else:
+                pass
 
     for (ft, e, checksum) in generated:
         if os.path.dirname(ft) != "":
             os.makedirs(os.path.dirname(ft), exist_ok=True)
         if e and ft in checksums_real and checksums_real[ft] != checksums_before[ft]:
-            progress(ft, e, checksums_real.get(ft, None) == checksums_before[ft], ".")
+            progress(ft, e, checksums_real.get(ft, None) == checksums_before.get(ft, None), ".")
             generated_merged.append((ft, e, checksums_before[ft]))
             continue
         if not ft in checksums_real or checksums_real[ft] != checksums[ft]:
-            progress(ft, e, checksums_real.get(ft, None) == checksums_before[ft], "G")
+            progress(ft, e, checksums_real.get(ft, None) == checksums_before.get(ft, None), "G")
             with open(ft, "w") as f:
                 f.write(tree[ft])
         else:
