@@ -73,7 +73,7 @@ def parse(schema, required=False, path=[]):
 
 
 def get():
-    with open("config.schema.json", "r") as f:
+    with open("etc/config.schema.json", "r") as f:
         config_list = parse(json.loads(f.read()))
     for e in config_list:
         if not e["valid"] or (e["required"] and e["value"] is None):
