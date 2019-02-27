@@ -38,9 +38,8 @@ def templates_list(name):
     return templates
 
 
-def progress(ft, ftl, msg):
-    format_str = "{:" + str(ftl) + "} {}"
-    print(format_str.format(ft, msg))
+def progress(ft, e, unmodified, action):
+    print("[{}{}{}] {}".format("E" if e else ".", "." if unmodified else "M", action, ft))
 
 
 @click.group(cls=OrderedGroup, commands=collections.OrderedDict())
@@ -157,30 +156,28 @@ def generate():
 
     generated_merged = []
 
-    ftl = max([len(ft) for ft in list(checksums.keys()) + list(checksums_before.keys())])
-
     for (ft, e, checksum) in generated_before:
         if not ft in checksums:
             if not e or checksums_real.get(ft, None) == checksum:
-                progress(ft, ftl, "removing previously generated")
+                progress(ft, e, checksums_real.get(ft, None) == checksum, "D")
                 os.unlink(ft)
             else:
-                progress(ft, ftl, "preserving modified example not existing in new tree")
+                progress(ft, e, checksums_real.get(ft, None) == checksum, ".")
                 generated_merged.append((ft, e, checksum))
 
     for (ft, e, checksum) in generated:
         if os.path.dirname(ft) != "":
             os.makedirs(os.path.dirname(ft), exist_ok=True)
         if e and ft in checksums_real and checksums_real[ft] != checksums_before[ft]:
-            progress(ft, ftl, "preserving modified example")
+            progress(ft, e, checksums_real.get(ft, None) == checksums_before[ft], ".")
             generated_merged.append((ft, e, checksums_before[ft]))
             continue
         if not ft in checksums_real or checksums_real[ft] != checksums[ft]:
-            progress(ft, ftl, "{}generating {}".format("re" if ft in checksums_real else "", "example " if e else ""))
+            progress(ft, e, checksums_real.get(ft, None) == checksums_before[ft], "G")
             with open(ft, "w") as f:
                 f.write(tree[ft])
         else:
-            progress(ft, ftl, "ignoring unmodified")
+            progress(ft, e, checksums_real[ft] == checksums_before[ft], ".")
         generated_merged.append((ft, e, checksum))
 
     with open(".nf/generated.json", "w") as f:
