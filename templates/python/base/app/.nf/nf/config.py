@@ -2,7 +2,13 @@ import os
 import json
 
 
+class NFConfigException(Exception):
+    pass
+
+
 def _parse_value(value, schema):
+    if value == "":
+        return (value, True)
     if schema["type"] == "string":
         return (value, True)
     if schema["type"] == "number":
@@ -23,7 +29,7 @@ def _parse_value(value, schema):
         item_type = schema["items"]["type"]
         value = value.split(",")
         value = [_parse_value(v, {"type": item_type}) for v in value]
-        return ([v[0] for v in value], any(v[1] == False for v in value))
+        return ([v[0] for v in value], all(v[1] for v in value))
     return (value, False)
 
 
@@ -48,8 +54,8 @@ def parse(schema, required=False, path=[]):
         result = []
         for name in schema["properties"].keys():
             result.extend(parse(schema["properties"][name],
-                                 required or ("required" in schema and name in schema["required"]),
-                                 path + [name]))
+                                required or ("required" in schema and name in schema["required"]),
+                                path + [name]))
         return result
     name = ("_".join(["{{name}}"] + path)).upper()
     default = schema.get("default", None)
@@ -67,4 +73,7 @@ def parse(schema, required=False, path=[]):
 def get():
     with open("config.schema.json", "r") as f:
         config_list = parse(json.loads(f.read()))
+    for e in config_list:
+        if not e["valid"] or (e["required"] and e["value"] is None):
+            raise NFConfigException("{}: {}".format(e["name"], e["value"]))
     return _to_dict(config_list)
